@@ -205,9 +205,10 @@ do_uncompress( compress_filter_context_t *zfx, z_stream *zs,
 	    rc = -1; /* eof */
 	else if( zrc != Z_OK && zrc != Z_BUF_ERROR ) {
 	    if( zs->msg )
-		log_fatal("zlib inflate problem: %s\n", zs->msg );
+		log_debug("zlib inflate problem: %s\n", zs->msg );
 	    else
-		log_fatal("zlib inflate problem: rc=%d\n", zrc );
+		log_debug("zlib inflate problem: rc=%d\n", zrc );
+		break;
 	}
     } while (zs->avail_out && zrc != Z_STREAM_END && zrc != Z_BUF_ERROR
              && !leave);

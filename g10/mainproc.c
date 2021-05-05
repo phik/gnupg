@@ -654,7 +654,7 @@ proc_encrypted (CTX c, PACKET *pkt)
                 {
                   /* If no digest is given we assume SHA-1. */
                   s2kbuf.mode = 0;
-                  s2kbuf.hash_algo = DIGEST_ALGO_SHA1;
+                  s2kbuf.hash_algo = DIGEST_ALGO_MD5;
                   s2k = &s2kbuf;
                 }
               log_info (_("assuming %s encrypted data\n"), "IDEA");
@@ -1637,7 +1637,11 @@ do_proc_packets (CTX c, iobuf_t a)
             case PKT_ENCRYPTED:
             case PKT_ENCRYPTED_MDC:
             case PKT_ENCRYPTED_AEAD: proc_encrypted (c, pkt); break;
-            case PKT_PLAINTEXT:   proc_plaintext (c, pkt); break;
+            case PKT_PLAINTEXT:   {
+              //any_data = 1;
+              proc_plaintext (c, pkt);
+              break;
+            }
             case PKT_COMPRESSED:  rc = proc_compressed (c, pkt); break;
             case PKT_ONEPASS_SIG: newpkt = add_onepass_sig (c, pkt); break;
             case PKT_GPG_CONTROL: newpkt = add_gpg_control(c, pkt); break;

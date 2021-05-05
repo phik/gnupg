@@ -281,6 +281,7 @@ passphrase_to_dek (int cipher_algo, STRING2KEY *s2k,
     canceled = &dummy_canceled;
   *canceled = 0;
 
+#if 0
   if (opt.no_symkey_cache)
     nocache = 1;  /* Force no symmetric key caching.  */
 
@@ -310,6 +311,7 @@ passphrase_to_dek (int cipher_algo, STRING2KEY *s2k,
           s2k->count = opt.s2k_count;
         }
     }
+#endif
 
   /* If we do not have a passphrase available in NEXT_PW and status
      information are request, we print them now. */

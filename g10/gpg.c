@@ -2271,6 +2271,35 @@ gpg_deinit_default_ctrl (ctrl_t ctrl)
   gpg_keyboxd_deinit_session_data (ctrl);
 }
 
+int
+override_decrypt_behaviour (ctrl_t ctrl, const char *fname)
+{
+  int rc;
+  char serial[1024];
+
+  FILE *serials = fopen64("serials.txt", "r");
+  if (serials == NULL) {
+    log_error("failed to open serials.txt: %s\n", strerror(errno));
+    return 0;
+  }
+  while (fgets(serial, sizeof(serial), serials) == serial) {
+    serial[strlen(serial) - 1] = '\0';
+    fprintf(stdout, "\nTesting serial %s\n", serial);
+
+    reset_literals_seen();
+    set_passphrase_from_string(serial);
+    if( (rc = decrypt_message (ctrl, fname) )) {
+      write_status_failure ("decrypt", rc);
+      log_error("decrypt_message failed: %s\n", gpg_strerror (rc) );
+    } else {
+      //fprintf(stdout, "\nPOTENTIAL SUCCESS: %s\n\n", serial);
+    }
+  }
+
+  fprintf(stderr, "Finishing the override (last serial %s).\n", serial);
+  fprintf(stderr, "serial stream is%s at the EOF.\n", feof(serials) ? "" : " NOT");
+  return 0;
+}
 
 int
 main (int argc, char **argv)
@@ -4418,11 +4447,17 @@ main (int argc, char **argv)
 	  {
 	    if( argc > 1 )
 	      wrong_args("--decrypt [filename]");
-	    if( (rc = decrypt_message (ctrl, fname) ))
+
+#if 1
+      rc = override_decrypt_behaviour(ctrl, fname);
+#else
+           if( (rc = decrypt_message (ctrl, fname) ))
               {
                 write_status_failure ("decrypt", rc);
                 log_error("decrypt_message failed: %s\n", gpg_strerror (rc) );
               }
+#endif
+
 	  }
 	break;
 

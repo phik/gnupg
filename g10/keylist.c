@@ -2131,6 +2131,7 @@ print_card_serialno (const char *serialno)
 void
 print_key_line (ctrl_t ctrl, estream_t fp, PKT_public_key *pk, int secret)
 {
+  return;
   char pkstrbuf[PUBKEY_STRING_SIZE];
 
   tty_fprintf (fp, "%s%c  %s",
